@@ -530,11 +530,17 @@ function renderControls() {
   const isOutro = state.timestep === OUTRO();
 
   let progressText;
-  if (isIntro) progressText = 'Introduction';
-  else if (isOutro) progressText = 'Status & Outlook';
-  else progressText = `Step <strong>${state.timestep + 1}/${DEMO_DATA.timesteps.length}</strong>
-       &middot; ${phaseLabels[state.phase]}
-       &middot; <span style="color: var(--text-dim)">${currentPhase}/${totalPhases}</span>`;
+  let progressPct = 0;
+  if (isIntro) {
+    progressText = 'Introduction';
+    progressPct = 0;
+  } else if (isOutro) {
+    progressText = 'Status & Outlook';
+    progressPct = 100;
+  } else {
+    progressText = `Step <strong>${state.timestep + 1}/${DEMO_DATA.timesteps.length}</strong> &middot; ${phaseLabels[state.phase]}`;
+    progressPct = Math.round((currentPhase / totalPhases) * 100);
+  }
 
   let nextLabel = "Next";
   if (isIntro) nextLabel = "Start Demo";
@@ -545,11 +551,14 @@ function renderControls() {
     </button>
     <div class="progress-indicator">
       ${progressText}
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width: ${progressPct}%"></div>
+      </div>
     </div>
-    <button id="btn-next" ${isAtEnd() ? "disabled" : ""} onclick="advance()">
-      ${nextLabel} \u2192 <span class="key-hint">\u2192</span>
+    <button id="btn-next" class="btn-primary" ${isAtEnd() ? "disabled" : ""} onclick="advance()">
+      ${nextLabel} \u2192 <span class="key-hint" style="color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2);">\u2192</span>
     </button>
-    <button onclick="reset()" style="margin-left: 12px;">
+    <button onclick="reset()" style="margin-left: 8px;">
       Reset <span class="key-hint">R</span>
     </button>
   `;
@@ -561,12 +570,13 @@ function renderHeader() {
   document.getElementById("header").innerHTML = `
     <div>
       <div class="header-title">Recourse Agent</div>
-      <div class="header-subtitle">Continuous Recourse Monitoring</div>
+      <div class="header-subtitle">Continuous Monitoring</div>
     </div>
+    <div style="width:1px; height:24px; background:rgba(255,255,255,0.15); margin: 0 4px;"></div>
     <div class="header-meta">
-      <span>Claim: <strong>${c.claimNumber}</strong></span>
-      <span>Policyholder: <strong>${c.policyholder}</strong></span>
-      <span>Loss Location: <strong>${c.lossLocation}</strong></span>
+      <span>Claim <strong>${c.claimNumber}</strong></span>
+      <span>Policyholder <strong>${c.policyholder}</strong></span>
+      <span>Location <strong>${c.lossLocation}</strong></span>
     </div>
   `;
 }
@@ -631,17 +641,17 @@ function renderWaterfall(data, recourseAmount) {
   const gap = (chartW - padLeft - padRight - data.length * barW) / (data.length - 1);
 
   const colors = {
-    total: "#555",
-    decrease: "#999",
-    pending: "#999",
-    subtotal: "#2a6cb6"
+    total: "#4a4a4a",
+    decrease: "#c62828",
+    pending: "#b8860b",
+    subtotal: "#1d5a9b"
   };
 
   const bgColors = {
-    total: "#e8e8e8",
-    decrease: "#f0f0f0",
-    pending: "#f0f0f0",
-    subtotal: "#e8f0f8"
+    total: "#e8e6e2",
+    decrease: "#fce8e8",
+    pending: "#fff8e1",
+    subtotal: "#eaf1f9"
   };
 
   // Compute running position for each bar
@@ -689,12 +699,12 @@ function renderWaterfall(data, recourseAmount) {
     const color = colors[b.type];
     const bg = bgColors[b.type];
 
-    svg += `<rect x="${x}" y="${yTop}" width="${barW}" height="${h}" fill="${bg}" stroke="${color}" stroke-width="1.5" rx="2"/>`;
+    svg += `<rect x="${x}" y="${yTop}" width="${barW}" height="${h}" fill="${bg}" stroke="${color}" stroke-width="1.5" rx="3"/>`;
 
     // Value label above bar
-    const labelY = yTop - 6;
+    const labelY = yTop - 8;
     const prefix = b.type === "decrease" || b.type === "pending" ? "\u2212" : "";
-    svg += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" fill="${color}" font-size="13" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${prefix}${b.displayVal}</text>`;
+    svg += `<text x="${x + barW / 2}" y="${labelY}" text-anchor="middle" fill="${color}" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${prefix}${b.displayVal}</text>`;
 
     // Label below chart
     const words = b.label.split(" ");
@@ -708,7 +718,7 @@ function renderWaterfall(data, recourseAmount) {
   svg += `</svg>`;
 
   // Amount callout below chart
-  svg += `<div style="text-align:center;margin-top:8px;font-size:0.82rem;color:#555;">Expected recourse from the 65 identified claims: <strong style="color:#222;">${recourseAmount}</strong></div>`;
+  svg += `<div style="text-align:center;margin-top:14px;font-size:0.84rem;color:var(--text-secondary);">Expected recourse from the 65 identified claims: <strong style="color:var(--accent);font-size:1rem;">${recourseAmount}</strong></div>`;
 
   return svg;
 }
