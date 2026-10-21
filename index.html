@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recourse Agent — Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="header" class="header"></header>
+    <div class="main">
+      <nav id="timeline" class="timeline"></nav>
+      <main id="content" class="content lang-de"></main>
+    </div>
+    <footer id="controls" class="controls"></footer>
+  </div>
+
+  <!-- Document viewer modal -->
+  <div id="doc-modal" class="doc-modal">
+    <div class="doc-modal-content">
+      <div class="doc-modal-header">
+        <div>
+          <div id="doc-modal-title" class="doc-modal-title"></div>
+          <div id="doc-modal-meta" class="doc-modal-meta"></div>
+        </div>
+        <button class="doc-modal-close" onclick="closeDocument()">&times;</button>
+      </div>
+      <div id="doc-modal-body" class="doc-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
